@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam 账户共享实验</title>
+    <link rel="shortcut icon" href="../static/favicon.png">
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="steam-logo-wrapper index-width">
+        <img class="steam-logo" src="https://store.akamai.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016">
+    </div>
+    <div class="flip-container centered">
+        <div class="flipper">
+           <div class="front">
+                <div class="front-avatar"></div>
+                <h1 class="front-title">Steam 账户共享实验</h1>
+           </div>
+           <div class="back">
+                <div class="back-background">
+                    <div class="back-avatar"></div>
+                </div>
+                <div class="back-wrapper">
+                    <div class="code-area">
+                        <h1>验证码：<span class="text-cursor">{{ latest_code_area | safe }}</span></h1>
+                        <p>于{{ latest_code_time_area | safe }}来自{{ latest_code_region_area | safe }} <span class="code-refresh-notification">(刷新页面以获取新验证码)</span></p>
+                    </div>
+                    <div class="credentials-area">
+                        <span class="bold">用户名：</span><span class="text-cursor">KARPED2EM</span>
+                        <span class="bold">密码：</span><span class="text-cursor">SSTMAhjj520</span>
+                    </div>
+                    <div class="credentials-area">
+                        <span class="warning-text">请不要使用该账号游玩联网游戏或使用作弊器</span>
+                    </div>
+                    <div class="statistics-area">
+                        <div class="statistics-area-row">
+                            <span class="statistics-block"><span class="statistics-block-item">登录请求</span><span class="statistics-block-num">{{ count_login | safe }} 次</span></span>
+                            <span class="statistics-block"><span class="statistics-block-item">找回账号</span><span class="statistics-block-num">{{ count_recovery | safe }} 次</span></span>
+                            <span class="statistics-block"><span class="statistics-block-item">联系客服</span><span class="statistics-block-num">{{ count_support | safe }} 次</span></span>
+                            <span class="statistics-block"><span class="statistics-block-item">购买游戏</span><span class="statistics-block-num">{{ count_game_purchase | safe }} 次</span></span>
+                        </div>
+                        <div class="statistics-area-row">
+                            <span class="statistics-block"><span class="statistics-block-item">申请退款</span><span class="statistics-block-num">{{ count_refund_request | safe }} 次</span></span>
+                            <span class="statistics-block"><span class="statistics-block-item">退款成功</span><span class="statistics-block-num">{{ count_refunded | safe }} 次</span></span>
+                            <span class="statistics-block"><span class="statistics-block-item">市场购买</span><span class="statistics-block-num">{{ count_market_purchase | safe }} 次</span></span>
+                            <span class="statistics-block"><span class="statistics-block-item">市场出售</span><span class="statistics-block-num">{{ count_market_sold | safe }} 次</span></span>
+                        </div>
+                    </div>
+                </div>
+           </div>
+        </div>
+     </div>
+</body>
+</html>

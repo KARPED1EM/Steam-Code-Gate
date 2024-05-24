@@ -1,0 +1,308 @@
+/* CAPTCHA */
+
+.captcha_wrapper {
+   position: absolute;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   margin: auto;
+   top: 0;
+   left: 0;
+   right: 0;
+   bottom: 0;
+}
+
+.cpatcha-title {
+   color: white !important;
+   font-size: 30px !important;
+   margin-top: -20px !important;
+}
+
+#captcha-element {
+   height: 42px;
+   overflow: hidden;
+   border-radius: 4px;
+}
+
+/* /end */
+
+/* CENTERING */
+
+.centered {
+   position: fixed;
+   top: 50%;
+   left: 50%;
+   /* bring your own prefixes */
+   transform: translate(-50%, -50%);
+}
+
+/* /end */
+
+body {
+   background-image: url(https://store.akamai.steamstatic.com/public/shared/images/joinsteam/new_login_bg_strong_mask.jpg);
+   background-attachment: fixed;
+   background-size: cover;
+   background-repeat: no-repeat;
+}
+
+.steam-logo-wrapper {
+   position: absolute;
+   left: 30px;
+   top: 25px;
+}
+
+.captcha-width {
+   width: 365px;
+}
+
+.index-width {
+   width: 605px;
+}
+
+.steam-logo {
+   position: absolute;
+   width: 180px;
+}
+
+h3 {
+   position: relative;
+   left: 45%;
+}
+
+/* THE FRONT */
+
+.front {
+   background-color: #181a21;
+   cursor: default;
+   box-shadow: 0 10px 25px rgb(0 0 0 / 10%);
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+}
+
+.front-avatar {
+   background-image: url(https://avatars.akamai.steamstatic.com/3dbf516834ad5d9b1c17196d1bb63977430a7820_full.jpg);
+   background-size: cover;
+   width: 150px;
+   height: 150px;
+   border-radius: 50%;
+}
+
+.front-title {
+   color: white;
+   font-size: 20px;
+}
+
+/* /end */
+
+/* THE BACK */
+
+.back {
+   cursor: default;
+   box-shadow: 0 10px 25px rgb(0 0 0 / 10%);
+}
+
+.back-wrapper {
+   background-color:rgb(240, 246, 255);
+   position: fixed;
+   left: 0;
+   top: 0;
+   width: 100%;
+   height: 100%;
+}
+
+.back-background {
+   position: fixed;
+   z-index: 1000;
+   background-color: #181a21;
+   left: 0;
+   top: 0;
+   width: 25%;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.back-avatar {
+   background-image: url(https://avatars.akamai.steamstatic.com/3dbf516834ad5d9b1c17196d1bb63977430a7820_full.jpg);
+   background-size: cover;
+   width: 110px;
+   height: 110px;
+   border-radius: 50%;
+   margin-top: 28px;
+}
+
+h1 {
+   color: black;
+   margin-top: 5%;
+}
+
+p {
+   color: black;
+   line-height: 90%;
+   font-size: 16px;
+   margin-top: -15px;
+}
+
+.code-refresh-notification {
+   font-size: 12px;
+   color: #333;
+}
+
+.code-area {
+   margin-left: 30%;
+   width: 64%;
+   border-bottom: 1px solid black;
+   font-weight: 800;
+}
+
+.bold {
+   font-weight: bold;
+   margin-left: 12px;
+}
+
+.text-cursor {
+   cursor: text;
+}
+
+.credentials-area {
+   color: black;
+   margin-left: 30%;
+   line-height: 90%;
+   margin-top: 25px;
+
+   span {
+      color: black;
+      font-size: 16px;
+   }
+}
+
+.warning-text {
+   color: red;
+   margin-left: 30px;
+   animation: blink 1s infinite;
+}
+
+@keyframes blink{
+	50% {
+      opacity: 0;
+    }
+}
+
+.statistics-area-row {
+   color: black;
+   font-size: 14px;
+   display: flex;
+
+   span {
+      color: black;
+      font-size: 16px;
+   }
+}
+
+.statistics-area {
+   position: fixed;
+   margin-left: 29%;
+   bottom: 18px;
+}
+
+.statistics-block {
+   background-color: #fff;
+   width: 90px;
+   height: 55px;
+   margin: 5px;
+   border-radius: 8px;
+   box-shadow: 0 10px 25px rgb(0 0 0 / 10%);
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+}
+
+.statistics-block:hover {
+   background-color: #181a21;
+   transition: 300ms;
+}
+
+.statistics-block:hover .statistics-block-item,
+.statistics-block:hover .statistics-block-num
+{
+   color: #fff;
+   transition: 300ms;
+}
+
+.statistics-block-item {
+   color: #333;
+   font-weight: bold;
+}
+
+.statistics-block-num {
+   color: black;
+}
+
+/* /end */
+
+/* THE FLIP EFFECT */
+
+/* entire container, keeps perspective */
+.flip-container {
+   perspective: 100%;
+}
+/* flip the pane when hovered */
+.flip-container:hover .flipper,
+.flip-container.hover .flipper {
+   transform: rotateY(180deg);
+   cursor: pointer;
+}
+
+.flip-container,
+.front,
+.back {
+   height: 350px;
+   width: 600px;
+}
+
+.flipper {
+   transition: 0.5s;
+   transform-style: preserve-3d;
+   position: relative;
+}
+
+.front,
+.back {
+   backface-visibility: hidden;
+   position: absolute;
+}
+
+.front {
+   z-index: 2;
+   /* firefox 31 */
+   transform: rotateY(0deg);
+}
+
+.back {
+   background-color: black;
+}
+
+.back {
+   transform: rotateY(180deg);
+}
+
+.vertical.flip-container {
+   position: relative;
+}
+
+.vertical .back {
+   transform: rotateX(180deg);
+}
+
+.vertical.flip-container .flipper {
+   transform-origin: 100% 400x;
+}
+
+.vertical.flip-container:hover .flipper {
+   transform: rotateX(-180deg);
+}
