@@ -33,7 +33,6 @@ def init_app_once():
     setup_logging()
     if code_cache is None:
         code_cache = DataManager.read_from_file()
-        # 启动即清理历史缓存中的异常数据
         cleaned = DataManager.clean_cache_on_start(code_cache or [])
         code_cache = cleaned
         DataManager.save_to_file(code_cache)
@@ -69,7 +68,6 @@ def update_emails_background() -> Optional[str]:
             typ, new_list = typ2, new_list2
 
         unique_list = CodeEmail.update_emails_cache(code_cache, new_list)
-        # 对新增合并后的列表再做一次轻度清洗，确保 region 规范
         unique_list = DataManager.clean_cache_on_start(unique_list)
 
         formal_num = len(code_cache) if code_cache else 0
