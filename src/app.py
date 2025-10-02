@@ -8,7 +8,7 @@ from data_manager import DataManager
 from settings import Settings
 from utils import Utils
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='static')
 log = logging.getLogger("app")
 
 # Global state
