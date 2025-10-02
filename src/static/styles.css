@@ -327,7 +327,7 @@ p {
    flex-direction: column;
    min-height: 300px;
 
-   background-image: url(/static/bg.webp);
+   background-image: url(/src/static/bg.webp);
    background-repeat: no-repeat;
    background-position-x: right;
    background-position-y: bottom;
