@@ -1,7 +1,25 @@
 import os
 from pathlib import Path
+from typing import Optional
+
+from dotenv import load_dotenv
 
 from src.constants import JWT
+
+
+_DOTENV_LOADED = False
+
+
+def _load_dotenv_once(base_dir: Path) -> None:
+    global _DOTENV_LOADED
+    if _DOTENV_LOADED:
+        return
+    candidates = [base_dir / ".env", base_dir / "src" / ".env"]
+    for path in candidates:
+        if path.exists():
+            load_dotenv(dotenv_path=path, override=False)
+            break
+    _DOTENV_LOADED = True
 
 
 class Config:
@@ -19,6 +37,9 @@ class Config:
 
     def _get_required_env(self, name: str) -> str:
         value = os.getenv(name)
+        if value is None or not value.strip():
+            _load_dotenv_once(self.BASE_DIR)
+            value = os.getenv(name)
         if value is None or not value.strip():
             raise RuntimeError(f"Missing required environment variable: {name}")
         return value.strip()
