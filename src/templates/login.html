@@ -18,7 +18,7 @@
         <form id="guest-form">
             <div class="form-group">
                 <label for="guest-passphrase">访问口令</label>
-                <input type="password" id="guest-passphrase" name="passphrase" placeholder="请输入访问口令" required autofocus>
+                <input type="password" id="guest-passphrase" name="passphrase" placeholder="请输入访问口令" required maxlength="128" autofocus>
             </div>
             <button type="submit" class="btn btn-primary btn-full" id="guest-submit-btn">
                 登录
@@ -30,11 +30,11 @@
         <form id="admin-form">
             <div class="form-group">
                 <label for="admin-username">用户名</label>
-                <input type="text" id="admin-username" name="username" placeholder="请输入用户名" required>
+                <input type="text" id="admin-username" name="username" placeholder="请输入用户名" required minlength="3" maxlength="50">
             </div>
             <div class="form-group">
                 <label for="admin-password">密码</label>
-                <input type="password" id="admin-password" name="password" placeholder="请输入密码" required>
+                <input type="password" id="admin-password" name="password" placeholder="请输入密码" required minlength="6" maxlength="128">
             </div>
             <button type="submit" class="btn btn-primary btn-full" id="admin-submit-btn">
                 登录
@@ -88,10 +88,83 @@ function setButtonLoading(button, loading) {
     }
 }
 
+function getLengthHint(input) {
+    const minLength = input.minLength > 0 ? input.minLength : null;
+    const maxLength = input.maxLength > 0 ? input.maxLength : null;
+    if (minLength && maxLength) {
+        return `（${minLength}-${maxLength} 个字符）`;
+    }
+    if (minLength) {
+        return `（至少 ${minLength} 个字符）`;
+    }
+    if (maxLength) {
+        return `（最多 ${maxLength} 个字符）`;
+    }
+    return '';
+}
+
+function getValidationMessage(input, label) {
+    const validity = input.validity;
+    if (validity.valueMissing) {
+        return `请输入${label}${getLengthHint(input)}`;
+    }
+    if (validity.tooShort) {
+        return `${label}至少需要 ${input.minLength} 个字符`;
+    }
+    if (validity.tooLong) {
+        return `${label}不能超过 ${input.maxLength} 个字符`;
+    }
+    return '';
+}
+
+function prepareFormValidation(form, fields) {
+    fields.forEach(({ input, label }) => {
+        input.setCustomValidity('');
+        const message = getValidationMessage(input, label);
+        if (message) {
+            input.setCustomValidity(message);
+        }
+    });
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return false;
+    }
+    return true;
+}
+
+function attachFieldValidation(fields) {
+    fields.forEach(({ input, label }) => {
+        input.addEventListener('input', () => input.setCustomValidity(''));
+        input.addEventListener('invalid', () => {
+            const message = getValidationMessage(input, label);
+            if (message) {
+                input.setCustomValidity(message);
+            }
+        });
+    });
+}
+
+const guestFormFields = [
+    { input: document.getElementById('guest-passphrase'), label: '访问口令' }
+];
+
+const adminFormFields = [
+    { input: document.getElementById('admin-username'), label: '用户名' },
+    { input: document.getElementById('admin-password'), label: '密码' }
+];
+
+attachFieldValidation(guestFormFields);
+attachFieldValidation(adminFormFields);
+
 // Guest login
 document.getElementById('guest-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     hideError();
+
+    if (!prepareFormValidation(e.target, guestFormFields)) {
+        return;
+    }
 
     const submitBtn = document.getElementById('guest-submit-btn');
     setButtonLoading(submitBtn, true);
@@ -123,6 +196,10 @@ document.getElementById('guest-form').addEventListener('submit', async (e) => {
 document.getElementById('admin-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     hideError();
+
+    if (!prepareFormValidation(e.target, adminFormFields)) {
+        return;
+    }
 
     const submitBtn = document.getElementById('admin-submit-btn');
     setButtonLoading(submitBtn, true);

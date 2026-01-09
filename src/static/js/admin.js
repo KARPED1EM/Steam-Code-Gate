@@ -61,11 +61,149 @@ function toggleProviderConfig() {
         emailConfig.classList.add('hidden');
         otpConfig.classList.remove('hidden');
     }
+
+    updateProviderValidation(providerType);
 }
+
+function getLengthHint(input) {
+    const minLength = input.minLength > 0 ? input.minLength : null;
+    const maxLength = input.maxLength > 0 ? input.maxLength : null;
+    if (minLength && maxLength) {
+        return `（${minLength}-${maxLength} 个字符）`;
+    }
+    if (minLength) {
+        return `（至少 ${minLength} 个字符）`;
+    }
+    if (maxLength) {
+        return `（最多 ${maxLength} 个字符）`;
+    }
+    if (input.type === 'number' && (input.min || input.max)) {
+        if (input.min && input.max) {
+            return `（${input.min}-${input.max}）`;
+        }
+        if (input.min) {
+            return `（不小于 ${input.min}）`;
+        }
+        if (input.max) {
+            return `（不大于 ${input.max}）`;
+        }
+    }
+    return '';
+}
+
+function getValidationMessage(input, label) {
+    const validity = input.validity;
+    if (validity.valueMissing) {
+        return `请输入${label}${getLengthHint(input)}`;
+    }
+    if (validity.typeMismatch && input.type === 'email') {
+        return `请输入有效的${label}`;
+    }
+    if (validity.tooShort) {
+        return `${label}至少需要 ${input.minLength} 个字符`;
+    }
+    if (validity.tooLong) {
+        return `${label}不能超过 ${input.maxLength} 个字符`;
+    }
+    if (validity.rangeUnderflow || validity.rangeOverflow) {
+        return `${label}需在 ${input.min} 到 ${input.max} 之间`;
+    }
+    return '';
+}
+
+function prepareFormValidation(form, fields) {
+    fields.forEach(({ input, label }) => {
+        if (input.disabled) {
+            input.setCustomValidity('');
+            return;
+        }
+        input.setCustomValidity('');
+        const message = getValidationMessage(input, label);
+        if (message) {
+            input.setCustomValidity(message);
+        }
+    });
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return false;
+    }
+    return true;
+}
+
+function attachFieldValidation(fields) {
+    fields.forEach(({ input, label }) => {
+        input.addEventListener('input', () => input.setCustomValidity(''));
+        input.addEventListener('invalid', () => {
+            if (input.disabled) {
+                return;
+            }
+            const message = getValidationMessage(input, label);
+            if (message) {
+                input.setCustomValidity(message);
+            }
+        });
+    });
+}
+
+function updateProviderValidation(providerType) {
+    const emailFields = [
+        document.getElementById('create-imap-server'),
+        document.getElementById('create-imap-port'),
+        document.getElementById('create-email-address'),
+        document.getElementById('create-email-password')
+    ];
+    const otpField = document.getElementById('create-otp-token');
+    const useEmail = providerType === 'email';
+
+    emailFields.forEach((field) => {
+        field.required = useEmail;
+        field.disabled = !useEmail;
+        field.setCustomValidity('');
+    });
+
+    otpField.required = !useEmail;
+    otpField.disabled = useEmail;
+    otpField.setCustomValidity('');
+}
+
+const profileFormFields = [
+    { input: document.getElementById('profile-username'), label: '用户名' },
+    { input: document.getElementById('profile-password'), label: '新密码' },
+    { input: document.getElementById('profile-contact'), label: '联系方式' }
+];
+
+const createAccountFields = [
+    { input: document.getElementById('create-name'), label: '显示名称' },
+    { input: document.getElementById('create-account-name'), label: '账号名' },
+    { input: document.getElementById('create-password'), label: '密码' },
+    { input: document.getElementById('create-imap-server'), label: 'IMAP 服务器' },
+    { input: document.getElementById('create-imap-port'), label: 'IMAP 端口' },
+    { input: document.getElementById('create-email-address'), label: '邮箱地址' },
+    { input: document.getElementById('create-email-password'), label: '邮箱密码' },
+    { input: document.getElementById('create-otp-token'), label: 'OTP Token' },
+    { input: document.getElementById('create-passphrase'), label: '访问口令' }
+];
+
+const createAdminFields = [
+    { input: document.getElementById('admin-username'), label: '用户名' },
+    { input: document.getElementById('admin-password'), label: '密码' },
+    { input: document.getElementById('admin-contact'), label: '联系方式' }
+];
+
+attachFieldValidation(profileFormFields);
+attachFieldValidation(createAccountFields);
+attachFieldValidation(createAdminFields);
+
+updateProviderValidation(document.getElementById('create-provider-type').value);
 
 // Profile form
 document.getElementById('profile-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (!prepareFormValidation(e.target, profileFormFields)) {
+        return;
+    }
 
     const data = {
         username: document.getElementById('profile-username').value,
@@ -101,6 +239,12 @@ document.getElementById('create-account-form').addEventListener('submit', async 
     e.preventDefault();
 
     const providerType = document.getElementById('create-provider-type').value;
+    updateProviderValidation(providerType);
+
+    if (!prepareFormValidation(e.target, createAccountFields)) {
+        return;
+    }
+
     const data = {
         name: document.getElementById('create-name').value,
         account_name: document.getElementById('create-account-name').value,
@@ -145,6 +289,10 @@ document.getElementById('create-account-form').addEventListener('submit', async 
 // Create admin
 document.getElementById('create-admin-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (!prepareFormValidation(e.target, createAdminFields)) {
+        return;
+    }
 
     const data = {
         username: document.getElementById('admin-username').value,

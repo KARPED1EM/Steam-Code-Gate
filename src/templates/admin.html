@@ -112,16 +112,16 @@
         <form id="profile-form" style="max-width: 600px;">
             <div class="form-group">
                 <label>用户名</label>
-                <input type="text" id="profile-username" value="{{ admin.username }}" placeholder="请输入用户名" required>
+                <input type="text" id="profile-username" value="{{ admin.username }}" placeholder="请输入用户名" required minlength="3" maxlength="50">
             </div>
             <div class="form-group">
                 <label>新密码</label>
-                <input type="password" id="profile-password" placeholder="留空表示不修改密码">
+                <input type="password" id="profile-password" placeholder="留空表示不修改密码" minlength="6" maxlength="128">
                 <small style="color: var(--text-muted); display: block; margin-top: 4px;">不修改密码请留空</small>
             </div>
             <div class="form-group">
                 <label>联系方式</label>
-                <textarea id="profile-contact" rows="4" placeholder="输入您的联系方式，支持多行">{{ admin.contact_info or '' }}</textarea>
+                <textarea id="profile-contact" rows="4" placeholder="输入您的联系方式，支持多行" maxlength="500">{{ admin.contact_info or '' }}</textarea>
                 <small style="color: var(--text-muted); display: block; margin-top: 4px;">支持换行，访客可见此信息</small>
             </div>
             <button type="submit" class="btn btn-primary">保存修改</button>
@@ -174,15 +174,15 @@
         <form id="create-account-form">
             <div class="form-group">
                 <label>显示名称 *</label>
-                <input type="text" id="create-name" placeholder="例如：我的主力号" required>
+                <input type="text" id="create-name" placeholder="例如：我的主力号" required maxlength="100">
             </div>
             <div class="form-group">
                 <label>账号名 *</label>
-                <input type="text" id="create-account-name" placeholder="Steam登录账号名" required>
+                <input type="text" id="create-account-name" placeholder="Steam登录账号名" required maxlength="100">
             </div>
             <div class="form-group">
                 <label>密码</label>
-                <input type="text" id="create-password" placeholder="Steam账号密码（选填）">
+                <input type="text" id="create-password" placeholder="Steam账号密码（选填）" maxlength="128">
             </div>
             <div class="form-group">
                 <label class="checkbox-label">
@@ -204,7 +204,7 @@
                 </div>
                 <div class="form-group">
                     <label>IMAP 端口</label>
-                    <input type="number" id="create-imap-port" value="993">
+                    <input type="number" id="create-imap-port" value="993" min="1" max="65535">
                 </div>
                 <div class="form-group">
                     <label>邮箱地址</label>
@@ -212,7 +212,7 @@
                 </div>
                 <div class="form-group">
                     <label>邮箱密码</label>
-                    <input type="password" id="create-email-password" placeholder="邮箱密码或应用专用密码">
+                    <input type="password" id="create-email-password" placeholder="邮箱密码或应用专用密码" maxlength="128">
                 </div>
                 <div class="form-group">
                     <label class="checkbox-label">
@@ -230,7 +230,7 @@
             </div>
             <div class="form-group">
                 <label>访问口令 *</label>
-                <input type="text" id="create-passphrase" placeholder="供访客使用的访问口令" required>
+                <input type="text" id="create-passphrase" placeholder="供访客使用的访问口令" required maxlength="128">
             </div>
             <button type="submit" class="btn btn-primary btn-full">创建账号</button>
         </form>
@@ -244,15 +244,15 @@
         <form id="create-admin-form">
             <div class="form-group">
                 <label>用户名 *</label>
-                <input type="text" id="admin-username" placeholder="请输入用户名" required>
+                <input type="text" id="admin-username" placeholder="请输入用户名" required minlength="3" maxlength="50">
             </div>
             <div class="form-group">
                 <label>密码 *</label>
-                <input type="password" id="admin-password" placeholder="请输入密码" required>
+                <input type="password" id="admin-password" placeholder="请输入密码" required minlength="6" maxlength="128">
             </div>
             <div class="form-group">
                 <label>联系方式</label>
-                <textarea id="admin-contact" rows="3" placeholder="可选，访客可见"></textarea>
+                <textarea id="admin-contact" rows="3" placeholder="可选，访客可见" maxlength="500"></textarea>
             </div>
             <div class="form-group">
                 <label class="checkbox-label">
