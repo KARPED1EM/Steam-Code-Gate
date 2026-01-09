@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -18,6 +19,17 @@ app.include_router(admin.router, tags=["Admin"])
 @app.on_event("startup")
 async def startup_event():
     setup_database()
+
+
+@app.exception_handler(HTTPException)
+async def auth_redirect_handler(request: Request, exc: HTTPException):
+    if exc.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN):
+        path = request.url.path
+        if request.method == "GET" and not path.startswith("/api/"):
+            if path not in {"/login", "/logout"}:
+                return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+
+    return await http_exception_handler(request, exc)
 
 
 @app.get("/")
