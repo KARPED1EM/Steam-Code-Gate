@@ -11,8 +11,8 @@ English | [简体中文](./README.zh-CN.md)
 
 <br/>
 
-![Python](https://img.shields.io/badge/python-3.13+-blue?style=flat-square)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.128+-009688?style=flat-square)
+![Python](https://img.shields.io/badge/python-3.13%2B-blue?style=flat-square)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.128%2B-009688?style=flat-square)
 ![Docker](https://img.shields.io/badge/docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![License](https://img.shields.io/github/license/karped1em/steam-code-gate?style=flat-square)
 
@@ -107,6 +107,17 @@ http://<SERVER-IP>:13780
 
 ## 🧪 Local Development
 
+You may configure environment variables using a `.env` file.
+
+Example `.env`:
+
+```env
+DATABASE_PATH=./scg.db
+JWT_SECRET_KEY=dev-secret
+```
+
+Start the application:
+
 ```bash
 uv run python run.py
 ```
@@ -121,16 +132,19 @@ http://localhost:8000
 
 ## ⚙️ Configuration
 
-### Environment Variables
+### Environment Variables (Required)
 
-| Name             | Description                                    | Default  |
-| ---------------- | ---------------------------------------------- | -------- |
-| `DATABASE_PATH`  | SQLite database file path                      | `scg.db` |
-| `JWT_SECRET_KEY` | JWT secret key (must be changed in production) | —        |
+> ❗ Both environment variables are **mandatory** and must not be empty.
+> The application will refuse to start if any of them is missing or empty.
+
+| Name             | Description               |
+| ---------------- | ------------------------- |
+| `DATABASE_PATH`  | SQLite database file path |
+| `JWT_SECRET_KEY` | JWT secret key            |
 
 ### Database
 
-SQLite database will be created automatically on first startup.
+SQLite database file will be created automatically on first startup.
 
 ---
 

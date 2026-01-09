@@ -11,8 +11,8 @@
 
 <br/>
 
-![Python](https://img.shields.io/badge/python-3.13+-blue?style=flat-square)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.128+-009688?style=flat-square)
+![Python](https://img.shields.io/badge/python-3.13%2B-blue?style=flat-square)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.128%2B-009688?style=flat-square)
 ![Docker](https://img.shields.io/badge/docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![License](https://img.shields.io/github/license/karped1em/steam-code-gate?style=flat-square)
 
@@ -107,6 +107,17 @@ http://<服务器IP>:13780
 
 ## 🧪 本地开发
 
+可以使用 `.env` 文件配置环境变量。
+
+示例 `.env`：
+
+```env
+DATABASE_PATH=./scg.db
+JWT_SECRET_KEY=dev-secret
+```
+
+启动应用：
+
 ```bash
 uv run python run.py
 ```
@@ -121,12 +132,15 @@ http://localhost:8000
 
 ## ⚙️ 配置
 
-### 环境变量
+### 环境变量（必填）
 
-| 变量名           | 说明                         | 默认值   |
-| ---------------- | ---------------------------- | -------- |
-| `DATABASE_PATH`  | SQLite 数据库文件路径        | `scg.db` |
-| `JWT_SECRET_KEY` | JWT 密钥（生产环境必须修改） | —        |
+> ❗ 以下两个环境变量均 **没有默认值且不能为空**。
+> 若未正确配置，程序将拒绝启动。
+
+| 变量名              | 说明             |
+| ---------------- | -------------- |
+| `DATABASE_PATH`  | SQLite 数据库文件路径 |
+| `JWT_SECRET_KEY` | JWT 密钥         |
 
 ### 数据库
 
