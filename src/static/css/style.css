@@ -133,6 +133,12 @@ body {
     transition: all 0.3s;
 }
 
+.form-group select option,
+.form-group select optgroup {
+    background: var(--dark-card);
+    color: var(--text-primary);
+}
+
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
@@ -154,64 +160,84 @@ body {
 }
 
 .form-group input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 6px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.12s ease, border-color 0.2s, background 0.2s, box-shadow 0.2s;
-    vertical-align: middle;
-    display: inline-grid;
-    place-content: center;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .form-group input[type="checkbox"]:hover {
-    border-color: rgba(254, 44, 85, 0.7);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(254, 44, 85, 0.18);
-    transform: translateY(-1px);
+    box-shadow: none;
 }
 
 .form-group input[type="checkbox"]::before {
-    content: '';
-    width: 10px;
-    height: 6px;
-    border: solid white;
-    border-width: 0 0 2px 2px;
-    transform: rotate(-45deg) scale(0);
-    transform-origin: center;
-    transition: transform 0.12s ease-out;
+    content: none;
 }
 
 .form-group input[type="checkbox"]:checked {
-    background: linear-gradient(135deg, var(--tiktok-red), var(--tiktok-red-hover));
-    border-color: var(--tiktok-red-hover);
-    box-shadow: 0 6px 16px rgba(254, 44, 85, 0.35), 0 0 0 2px rgba(254, 44, 85, 0.18);
+    box-shadow: none;
 }
 
 .form-group input[type="checkbox"]:checked::before {
-    transform: rotate(-45deg) scale(1);
+    transform: none;
 }
 
 .form-group input[type="checkbox"]:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(254, 44, 85, 0.35);
 }
 
 .form-group input[type="checkbox"]:active {
-    transform: translateY(0) scale(0.97);
+    transform: none;
 }
 
 .checkbox-label {
     display: inline-flex;
     align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--dark-border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary);
+    font-weight: 600;
+    letter-spacing: 0.1px;
     cursor: pointer;
     user-select: none;
-    gap: 8px;
+    width: max-content;
+    max-width: 100%;
+    transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.12s ease;
+}
+
+.checkbox-label:hover {
+    border-color: rgba(254, 44, 85, 0.45);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.checkbox-label:focus-within {
+    border-color: rgba(254, 44, 85, 0.7);
+    box-shadow: 0 0 0 2px rgba(254, 44, 85, 0.2);
+}
+
+.checkbox-label:has(input[type="checkbox"]:checked) {
+    border-color: var(--tiktok-red);
+    background: rgba(254, 44, 85, 0.12);
+    color: var(--text-primary);
+    box-shadow: none;
+}
+
+.checkbox-label::after {
+    content: '❌';
+    opacity: 0.75;
+    margin-left: 4px;
+    font-size: 12px;
+    line-height: 1;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.checkbox-label:has(input[type="checkbox"]:checked)::after {
+    content: '✔';
+    opacity: 1;
 }
 
 .text-muted {
