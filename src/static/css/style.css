@@ -31,6 +31,11 @@ body {
     color: var(--text-primary);
     padding: 20px;
     line-height: 1.6;
+    overflow-x: hidden;
+}
+
+html {
+    overflow-x: hidden;
 }
 
 .container {
@@ -434,29 +439,33 @@ body {
 }
 
 .alert {
-    padding: 12px 16px;
-    border-radius: 10px;
+    padding: 14px 18px;
+    border-radius: 12px;
     margin-bottom: 20px;
     font-size: 14px;
-    animation: slideDown 0.3s ease-out;
+    font-weight: 500;
+    border: 1px solid transparent;
+    background: rgba(26, 26, 26, 0.88);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    animation: slideDown 0.25s ease-out;
 }
 
 .alert-error {
-    background: rgba(254, 44, 85, 0.1);
-    border: 1px solid rgba(254, 44, 85, 0.3);
-    color: var(--tiktok-red);
+    border-color: rgba(254, 44, 85, 0.4);
+    color: #ff6b86;
+    box-shadow: 0 10px 24px rgba(254, 44, 85, 0.18);
 }
 
 .alert-success {
-    background: rgba(0, 242, 234, 0.1);
-    border: 1px solid rgba(0, 242, 234, 0.3);
-    color: var(--success);
+    border-color: rgba(0, 242, 234, 0.4);
+    color: #2ff6ee;
+    box-shadow: 0 10px 24px rgba(0, 242, 234, 0.2);
 }
 
 .alert-warning {
-    background: rgba(255, 184, 0, 0.1);
-    border: 1px solid rgba(255, 184, 0, 0.3);
-    color: var(--warning);
+    border-color: rgba(255, 184, 0, 0.45);
+    color: #ffd35c;
+    box-shadow: 0 10px 24px rgba(255, 184, 0, 0.2);
 }
 
 .modal {
@@ -473,6 +482,7 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
+    overflow-x: hidden;
 }
 
 .modal.show {
@@ -491,6 +501,7 @@ body {
     animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     max-height: calc(100vh - 40px);
     overflow-y: auto;
+    overflow-x: hidden;
     margin: 0;
 }
 
@@ -558,6 +569,9 @@ body {
     margin-bottom: 24px;
     font-family: 'Courier New', monospace;
     text-shadow: 0 0 20px rgba(254, 44, 85, 0.3);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .code-label {
@@ -696,10 +710,37 @@ body {
 
 #toast-container {
     position: fixed;
-    top: 24px;
-    right: 24px;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 2000;
-    max-width: 400px;
+    width: min(480px, calc(100% - 32px));
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#toast-container .alert {
+    width: 100%;
+    margin-bottom: 12px;
+    text-align: center;
+    background: rgba(26, 26, 26, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-left: 4px solid transparent;
+}
+
+#toast-container .alert-error {
+    border-left-color: var(--tiktok-red);
+}
+
+#toast-container .alert-success {
+    border-left-color: var(--success);
+}
+
+#toast-container .alert-warning {
+    border-left-color: var(--warning);
 }
 
 .confirm-dialog {
@@ -841,6 +882,12 @@ body {
     .home-container,
     .admin-container {
         padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .code-value {
+        letter-spacing: 2px;
     }
 }
 
