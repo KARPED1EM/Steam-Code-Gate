@@ -156,28 +156,30 @@ body {
 .form-group input[type="checkbox"] {
     appearance: none;
     -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--dark-border);
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.03);
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
     cursor: pointer;
     position: relative;
-    transition: border-color 0.2s, background 0.2s;
-    margin-right: 8px;
+    transition: transform 0.12s ease, border-color 0.2s, background 0.2s, box-shadow 0.2s;
     vertical-align: middle;
     display: inline-grid;
     place-content: center;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .form-group input[type="checkbox"]:hover {
-    border-color: var(--tiktok-red);
+    border-color: rgba(254, 44, 85, 0.7);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(254, 44, 85, 0.18);
+    transform: translateY(-1px);
 }
 
 .form-group input[type="checkbox"]::before {
     content: '';
-    width: 9px;
-    height: 5px;
+    width: 10px;
+    height: 6px;
     border: solid white;
     border-width: 0 0 2px 2px;
     transform: rotate(-45deg) scale(0);
@@ -186,8 +188,9 @@ body {
 }
 
 .form-group input[type="checkbox"]:checked {
-    background: var(--tiktok-red);
-    border-color: var(--tiktok-red);
+    background: linear-gradient(135deg, var(--tiktok-red), var(--tiktok-red-hover));
+    border-color: var(--tiktok-red-hover);
+    box-shadow: 0 6px 16px rgba(254, 44, 85, 0.35), 0 0 0 2px rgba(254, 44, 85, 0.18);
 }
 
 .form-group input[type="checkbox"]:checked::before {
@@ -195,8 +198,12 @@ body {
 }
 
 .form-group input[type="checkbox"]:focus-visible {
-    outline: 2px solid rgba(254, 44, 85, 0.35);
-    outline-offset: 2px;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(254, 44, 85, 0.35);
+}
+
+.form-group input[type="checkbox"]:active {
+    transform: translateY(0) scale(0.97);
 }
 
 .checkbox-label {
@@ -204,6 +211,7 @@ body {
     align-items: center;
     cursor: pointer;
     user-select: none;
+    gap: 8px;
 }
 
 .text-muted {
