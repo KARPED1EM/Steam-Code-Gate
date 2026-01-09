@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}主页 - Steam Code Gate{% endblock %}
+
+{% block content %}
+<div class="home-container glass-card">
+    <div class="header">
+        <h1>Steam 账号列表</h1>
+        <div class="header-actions">
+            {% if is_admin %}
+            <a href="/admin" class="btn btn-secondary">管理页面</a>
+            {% endif %}
+            <a href="/logout" class="btn btn-danger">登出</a>
+        </div>
+    </div>
+
+    {% if accounts %}
+    <div class="accounts-grid">
+        {% for account in accounts %}
+        <div class="account-card">
+            <h3>{{ account.name }}</h3>
+            <div class="account-info">
+                <div class="info-row">
+                    <span class="label">账号名</span>
+                    <span class="value">{{ account.account_name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">密码</span>
+                    <span class="value">{{ account.password or '未设置' }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">验证方式</span>
+                    <span class="value">{{ '邮箱验证' if account.code_provider_type == 'email' else 'OTP验证' }}</span>
+                </div>
+            </div>
+            <div class="account-actions">
+                <button class="btn btn-primary" onclick="getCode({{ account.id }}, '{{ account.code_provider_type }}')">获取验证码</button>
+                <button class="btn btn-secondary" onclick="getContact({{ account.id }})">联系号主</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">🔒</div>
+        <p>暂无可访问的账号</p>
+    </div>
+    {% endif %}
+</div>
+
+<div id="code-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('code-modal')">&times;</span>
+        <h2>验证码</h2>
+        <div id="code-display" class="code-display">
+            <div class="code-label" id="code-label">Steam Guard 验证码</div>
+            <div class="code-value" id="code-value">
+                <span class="loading"></span>
+            </div>
+            <div id="code-status" style="text-align: center; color: var(--text-secondary); margin-top: 16px; font-size: 14px;"></div>
+            <div id="email-timestamp" class="hidden" style="text-align: center; color: var(--text-secondary); margin-top: 8px; font-size: 13px;">
+                验证码时间：<span id="email-code-time"></span>
+            </div>
+            <div id="countdown-container" class="hidden">
+                <p>剩余时间：<span id="countdown">30</span> 秒</p>
+            </div>
+            <div id="refresh-container" class="hidden">
+                <button class="btn btn-primary" onclick="refreshCode()">刷新验证码</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contact-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('contact-modal')">&times;</span>
+        <h2>联系号主</h2>
+        <div id="contact-display">
+            <div class="contact-info" id="contact-info">
+                <span class="loading"></span> 加载中...
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentAccountId = null;
+let currentProviderType = null;
+let countdownInterval = null;
+
+async function getCode(accountId, providerType) {
+    clearCountdown();
+    closeModal('contact-modal');
+
+    currentAccountId = accountId;
+    const providerTypeNormalized = String(providerType || '').toLowerCase();
+    currentProviderType = providerTypeNormalized;
+
+    const codeValue = document.getElementById('code-value');
+    const codeStatus = document.getElementById('code-status');
+    const countdownContainer = document.getElementById('countdown-container');
+    const refreshContainer = document.getElementById('refresh-container');
+    const codeLabel = document.getElementById('code-label');
+    const emailTimestamp = document.getElementById('email-timestamp');
+    const emailCodeTime = document.getElementById('email-code-time');
+
+    showModal('code-modal');
+    codeValue.innerHTML = '<span class="loading"></span>';
+    codeLabel.textContent = providerTypeNormalized === 'email' ? '邮箱验证码' : 'Steam Guard 验证码';
+    codeStatus.textContent = providerTypeNormalized === 'email' ? '正在从邮箱获取验证码，请稍候...' : '正在生成验证码...';
+    codeStatus.style.color = 'var(--text-secondary)';
+    countdownContainer.classList.add('hidden');
+    refreshContainer.classList.add('hidden');
+    emailTimestamp.classList.add('hidden');
+    emailCodeTime.textContent = '';
+
+    try {
+        const response = await fetch(`/api/account/${accountId}/code`);
+
+        if (!response.ok) {
+            codeValue.textContent = '获取失败';
+            codeStatus.textContent = '无法获取验证码，请稍后重试';
+            codeStatus.style.color = 'var(--danger)';
+            return;
+        }
+
+        const data = await response.json();
+        codeStatus.textContent = '';
+
+        if (data.provider_type) {
+            currentProviderType = String(data.provider_type || '').toLowerCase();
+        }
+
+        if (data.code) {
+            codeValue.textContent = data.code;
+
+            const remainingSeconds = Number(data.remaining_seconds);
+            if (data.provider_type === 'otp' && Number.isFinite(remainingSeconds)) {
+                countdownContainer.classList.remove('hidden');
+                startCountdown(remainingSeconds);
+            } else {
+                refreshContainer.classList.remove('hidden');
+                codeStatus.textContent = '邮箱验证码已获取';
+                codeStatus.style.color = 'var(--text-secondary)';
+                if (data.code_timestamp) {
+                    const timestamp = new Date(data.code_timestamp);
+                    emailCodeTime.textContent = timestamp.toLocaleString();
+                    emailTimestamp.classList.remove('hidden');
+                }
+            }
+        } else {
+            codeValue.textContent = '暂无验证码';
+            codeStatus.textContent = '未找到有效的验证码';
+            codeStatus.style.color = 'var(--warning)';
+        }
+    } catch (error) {
+        codeValue.textContent = '网络错误';
+        codeStatus.textContent = '网络连接失败，请检查网络后重试';
+        codeStatus.style.color = 'var(--danger)';
+    }
+}
+
+function startCountdown(seconds) {
+    const countdownElement = document.getElementById('countdown');
+    countdownElement.textContent = seconds;
+
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+    }
+
+    countdownInterval = setInterval(async () => {
+        const modal = document.getElementById('code-modal');
+        if (!modal.classList.contains('show') || currentProviderType !== 'otp') {
+            clearCountdown();
+            return;
+        }
+
+        seconds--;
+        countdownElement.textContent = seconds;
+
+        if (seconds <= 0) {
+            clearCountdown();
+            await getCode(currentAccountId, currentProviderType);
+        }
+    }, 1000);
+}
+
+async function refreshCode() {
+    if (currentAccountId && currentProviderType) {
+        await getCode(currentAccountId, currentProviderType);
+    }
+}
+
+async function getContact(accountId) {
+    const contactInfo = document.getElementById('contact-info');
+
+    clearCountdown();
+    closeModal('code-modal');
+
+    showModal('contact-modal');
+    contactInfo.innerHTML = '<span class="loading"></span> 加载中...';
+
+    try {
+        const response = await fetch(`/api/account/${accountId}/contact`);
+
+        if (!response.ok) {
+            contactInfo.textContent = '获取失败，请稍后重试';
+            return;
+        }
+
+        const data = await response.json();
+        contactInfo.textContent = data.contact_info || '号主未设置联系方式';
+    } catch (error) {
+        contactInfo.textContent = '网络错误，请检查网络后重试';
+    }
+}
+
+function clearCountdown() {
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }
+}
+
+document.addEventListener('modal:closed', (event) => {
+    if (event.detail.modalId === 'code-modal') {
+        clearCountdown();
+        currentAccountId = null;
+        currentProviderType = null;
+    }
+});
+</script>
+{% endblock %}

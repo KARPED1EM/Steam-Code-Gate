@@ -1,0 +1,822 @@
+:root {
+    --tiktok-red: #FE2C55;
+    --tiktok-red-hover: #FF4D6D;
+    --tiktok-red-dark: #D91F47;
+    --dark-bg: #0F0F0F;
+    --dark-card: #1A1A1A;
+    --dark-card-hover: #242424;
+    --dark-border: #2A2A2A;
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+    --text-muted: #6B6B6B;
+    --success: #00F2EA;
+    --warning: #FFB800;
+    --danger: var(--tiktok-red);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    background: var(--dark-bg);
+    background-image:
+        radial-gradient(circle at 20% 50%, rgba(254, 44, 85, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0, 242, 234, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: var(--text-primary);
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.glass-card {
+    background: rgba(26, 26, 26, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.login-container {
+    max-width: 420px;
+    margin: 10vh auto;
+    padding: 40px;
+}
+
+.login-container h1 {
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    font-size: 14px;
+}
+
+.login-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px;
+    border-radius: 12px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.tab-btn.active {
+    background: var(--tiktok-red);
+    color: white;
+    box-shadow: 0 4px 12px rgba(254, 44, 85, 0.3);
+}
+
+.tab-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.tab-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--dark-border);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--text-primary);
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--tiktok-red);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(254, 44, 85, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+}
+
+.form-group input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--dark-border);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+    margin-right: 8px;
+    vertical-align: middle;
+    display: inline-grid;
+    place-content: center;
+}
+
+.form-group input[type="checkbox"]:hover {
+    border-color: var(--tiktok-red);
+}
+
+.form-group input[type="checkbox"]::before {
+    content: '';
+    width: 9px;
+    height: 5px;
+    border: solid white;
+    border-width: 0 0 2px 2px;
+    transform: rotate(-45deg) scale(0);
+    transform-origin: center;
+    transition: transform 0.12s ease-out;
+}
+
+.form-group input[type="checkbox"]:checked {
+    background: var(--tiktok-red);
+    border-color: var(--tiktok-red);
+}
+
+.form-group input[type="checkbox"]:checked::before {
+    transform: rotate(-45deg) scale(1);
+}
+
+.form-group input[type="checkbox"]:focus-visible {
+    outline: 2px solid rgba(254, 44, 85, 0.35);
+    outline-offset: 2px;
+}
+
+.checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.status-pending {
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.status-ok {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.status-error {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--tiktok-red);
+    color: white;
+    box-shadow: 0 4px 12px rgba(254, 44, 85, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--tiktok-red-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(254, 44, 85, 0.4);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: var(--tiktok-red-dark);
+    transform: translateY(-2px);
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.home-container,
+.admin-container {
+    padding: 32px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--dark-border);
+}
+
+.header h1 {
+    color: var(--text-primary);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.account-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--dark-border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.account-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--tiktok-red);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(254, 44, 85, 0.2);
+}
+
+.account-card h3 {
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.account-info {
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.info-row .label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    min-width: 90px;
+}
+
+.info-row .value {
+    color: var(--text-primary);
+    word-break: break-word;
+}
+
+.account-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.account-actions .btn {
+    flex: 1;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-secondary);
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+.alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    animation: slideDown 0.3s ease-out;
+}
+
+.alert-error {
+    background: rgba(254, 44, 85, 0.1);
+    border: 1px solid rgba(254, 44, 85, 0.3);
+    color: var(--tiktok-red);
+}
+
+.alert-success {
+    background: rgba(0, 242, 234, 0.1);
+    border: 1px solid rgba(0, 242, 234, 0.3);
+    color: var(--success);
+}
+
+.alert-warning {
+    background: rgba(255, 184, 0, 0.1);
+    border: 1px solid rgba(255, 184, 0, 0.3);
+    color: var(--warning);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.3s ease-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 32px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    margin: 0;
+}
+
+.modal-content.large {
+    max-width: 700px;
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--tiktok-red);
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--tiktok-red-hover);
+}
+
+.modal-content h2 {
+    margin-bottom: 24px;
+    color: var(--text-primary);
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.close {
+    position: absolute;
+    right: 24px;
+    top: 24px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.close:hover {
+    color: var(--tiktok-red);
+    background: rgba(254, 44, 85, 0.1);
+}
+
+.code-display {
+    text-align: center;
+    padding: 24px;
+}
+
+.code-value {
+    font-size: 56px;
+    font-weight: bold;
+    color: var(--tiktok-red);
+    letter-spacing: 8px;
+    margin-bottom: 24px;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 0 20px rgba(254, 44, 85, 0.3);
+}
+
+.code-label {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+#countdown-container,
+#refresh-container {
+    margin-top: 24px;
+}
+
+#countdown-container p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+#countdown {
+    color: var(--tiktok-red);
+    font-weight: 600;
+}
+
+.contact-info {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: var(--text-primary);
+    line-height: 1.8;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px;
+    border-radius: 12px;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.panel-header h2 {
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.accounts-table {
+    overflow-x: auto;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.accounts-table::-webkit-scrollbar {
+    height: 8px;
+}
+
+.accounts-table::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.accounts-table::-webkit-scrollbar-thumb {
+    background: var(--tiktok-red);
+    border-radius: 4px;
+}
+
+.accounts-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.accounts-table th,
+.accounts-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--dark-border);
+}
+
+.accounts-table th {
+    background: rgba(255, 255, 255, 0.05);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.accounts-table td {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.accounts-table tbody tr {
+    transition: all 0.2s;
+}
+
+.accounts-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.provider-config {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border: 1px solid var(--dark-border);
+}
+
+.loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: var(--tiktok-red);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+#toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 2000;
+    max-width: 400px;
+}
+
+.confirm-dialog {
+    max-width: 420px !important;
+}
+
+.confirm-dialog h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+
+.confirm-dialog-message {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.confirm-dialog-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.confirm-dialog-actions .btn {
+    min-width: 100px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 12px;
+    }
+
+    .login-container {
+        margin: 5vh auto;
+        padding: 32px 24px;
+    }
+
+    .login-container h1 {
+        font-size: 28px;
+    }
+
+    .accounts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        flex: 1;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        width: 100%;
+    }
+
+    .account-actions {
+        flex-direction: column;
+    }
+
+    .modal-content {
+        margin: 20px auto;
+        padding: 24px;
+        width: 95%;
+        max-height: calc(100vh - 40px);
+    }
+
+    .code-value {
+        font-size: 40px;
+        letter-spacing: 4px;
+    }
+
+    .accounts-table {
+        font-size: 13px;
+    }
+
+    .accounts-table th,
+    .accounts-table td {
+        padding: 12px 8px;
+    }
+
+    .home-container,
+    .admin-container {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .info-row {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .info-row .label {
+        min-width: auto;
+    }
+}

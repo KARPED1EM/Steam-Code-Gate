@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}管理页面 - Steam Code Gate{% endblock %}
+
+{% block content %}
+<div class="admin-container glass-card">
+    <div class="header">
+        <h1>管理页面</h1>
+        <div class="header-actions">
+            <a href="/home" class="btn btn-secondary">返回主页</a>
+            <a href="/logout" class="btn btn-danger">登出</a>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="accounts">共享管理</button>
+        <button class="tab-btn" data-tab="profile">个人资料</button>
+        {% if is_super_admin %}
+        <button class="tab-btn" data-tab="super-admin">账号管理</button>
+        {% endif %}
+    </div>
+
+    <div class="tab-panel active" id="accounts-panel">
+        <div class="panel-header">
+            <h2>我的 Steam 账号</h2>
+            <button class="btn btn-primary" onclick="showCreateAccountModal()">新增账号</button>
+        </div>
+
+        <div class="accounts-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>账号名</th>
+                        <th>验证方式</th>
+                        <th>邮箱服务</th>
+                        <th>访问口令</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="my-accounts-tbody">
+                    {% for account in my_accounts %}
+                    <tr>
+                        <td>{{ account.name }}</td>
+                        <td>{{ account.account_name }}</td>
+                        <td>{{ '邮箱' if account.code_provider_type.value == 'email' else 'OTP' }}</td>
+                        <td>
+                            {% if account.code_provider_type.value == 'email' %}
+                            <span class="status-pill status-pending email-status" data-account-id="{{ account.id }}">检测中</span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ account.access_passphrase }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="deleteAccount({{ account.id }})">删除</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if is_super_admin and other_accounts %}
+        <div class="panel-header" style="margin-top: 2rem;">
+            <h2>其他管理员的账号</h2>
+        </div>
+
+        <div class="accounts-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>账号名</th>
+                        <th>所有者</th>
+                        <th>验证方式</th>
+                        <th>邮箱服务</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in other_accounts %}
+                    <tr>
+                        <td>{{ account.name }}</td>
+                        <td>{{ account.account_name }}</td>
+                        <td>{{ account.owner.username }}</td>
+                        <td>{{ '邮箱' if account.code_provider_type.value == 'email' else 'OTP' }}</td>
+                        <td>
+                            {% if account.code_provider_type.value == 'email' %}
+                            <span class="status-pill status-pending email-status" data-account-id="{{ account.id }}">检测中</span>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="deleteAccount({{ account.id }})">删除</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="tab-panel" id="profile-panel">
+        <div class="panel-header">
+            <h2>个人资料</h2>
+        </div>
+        <form id="profile-form" style="max-width: 600px;">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="profile-username" value="{{ admin.username }}" placeholder="请输入用户名" required>
+            </div>
+            <div class="form-group">
+                <label>新密码</label>
+                <input type="password" id="profile-password" placeholder="留空表示不修改密码">
+                <small style="color: var(--text-muted); display: block; margin-top: 4px;">不修改密码请留空</small>
+            </div>
+            <div class="form-group">
+                <label>联系方式</label>
+                <textarea id="profile-contact" rows="4" placeholder="输入您的联系方式，支持多行">{{ admin.contact_info or '' }}</textarea>
+                <small style="color: var(--text-muted); display: block; margin-top: 4px;">支持换行，访客可见此信息</small>
+            </div>
+            <button type="submit" class="btn btn-primary">保存修改</button>
+        </form>
+    </div>
+
+    {% if is_super_admin %}
+    <div class="tab-panel" id="super-admin-panel">
+        <div class="panel-header">
+            <h2>管理员账号</h2>
+            <button class="btn btn-primary" onclick="showCreateAdminModal()">新增管理员</button>
+        </div>
+
+        <div class="accounts-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>用户名</th>
+                        <th>角色</th>
+                        <th>联系方式</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for adm in all_admins %}
+                    <tr>
+                        <td>{{ adm.username }}</td>
+                        <td>{{ '超级管理员' if adm.is_super_admin else '普通管理员' }}</td>
+                        <td>{{ adm.contact_info or '未设置' }}</td>
+                        <td>{{ adm.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if adm.id != admin.id %}
+                            <button class="btn btn-sm btn-danger" onclick="deleteAdmin({{ adm.id }})">删除</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div id="create-account-modal" class="modal">
+    <div class="modal-content large">
+        <span class="close" onclick="closeModal('create-account-modal')">&times;</span>
+        <h2>新增 Steam 账号</h2>
+        <form id="create-account-form">
+            <div class="form-group">
+                <label>显示名称 *</label>
+                <input type="text" id="create-name" placeholder="例如：我的主力号" required>
+            </div>
+            <div class="form-group">
+                <label>账号名 *</label>
+                <input type="text" id="create-account-name" placeholder="Steam登录账号名" required>
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="text" id="create-password" placeholder="Steam账号密码（选填）">
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="create-password-public">
+                    <span>密码公开显示</span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>验证方式 *</label>
+                <select id="create-provider-type" onchange="toggleProviderConfig()">
+                    <option value="email">邮箱验证</option>
+                    <option value="otp">OTP验证</option>
+                </select>
+            </div>
+            <div id="email-config" class="provider-config">
+                <div class="form-group">
+                    <label>IMAP 服务器</label>
+                    <input type="text" id="create-imap-server" placeholder="imap.qq.com">
+                </div>
+                <div class="form-group">
+                    <label>IMAP 端口</label>
+                    <input type="number" id="create-imap-port" value="993">
+                </div>
+                <div class="form-group">
+                    <label>邮箱地址</label>
+                    <input type="email" id="create-email-address" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>邮箱密码</label>
+                    <input type="password" id="create-email-password" placeholder="邮箱密码或应用专用密码">
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="create-use-ssl" checked>
+                        <span>使用 SSL</span>
+                    </label>
+                </div>
+            </div>
+            <div id="otp-config" class="provider-config hidden">
+                <div class="form-group">
+                    <label>OTP Token (Base64)</label>
+                    <input type="text" id="create-otp-token" placeholder="Steam Guard shared_secret">
+                    <small style="color: var(--text-muted); display: block; margin-top: 4px;">从Steam Guard获取的Base64编码密钥</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>访问口令 *</label>
+                <input type="text" id="create-passphrase" placeholder="供访客使用的访问口令" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">创建账号</button>
+        </form>
+    </div>
+</div>
+
+<div id="create-admin-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('create-admin-modal')">&times;</span>
+        <h2>新增管理员</h2>
+        <form id="create-admin-form">
+            <div class="form-group">
+                <label>用户名 *</label>
+                <input type="text" id="admin-username" placeholder="请输入用户名" required>
+            </div>
+            <div class="form-group">
+                <label>密码 *</label>
+                <input type="password" id="admin-password" placeholder="请输入密码" required>
+            </div>
+            <div class="form-group">
+                <label>联系方式</label>
+                <textarea id="admin-contact" rows="3" placeholder="可选，访客可见"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="admin-is-super">
+                    <span>设为超级管理员</span>
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">创建管理员</button>
+        </form>
+    </div>
+</div>
+
+<script src="/static/js/admin.js"></script>
+{% endblock %}
