@@ -32,17 +32,21 @@ class SteamAccountRepository(BaseRepository[SteamAccount]):
 
     def update_latest_code(self, account_id: int, code: str, code_time=None, update_time=None) -> None:
         from datetime import datetime
-        account = self.get_by_id(account_id)
-        if account:
-            account.latest_code = code
-            account.latest_code_updated_at = update_time or datetime.utcnow()
-            if code_time is not None:
-                account.latest_email_code_at = code_time
-            self.db.commit()
+        update_dict = {
+            "latest_code": code,
+            "latest_code_updated_at": update_time or datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        if code_time is not None:
+            update_dict["latest_email_code_at"] = code_time
+
+        self.db.query(SteamAccount).filter(SteamAccount.id == account_id).update(update_dict)
+        self.db.commit()
 
     def touch_latest_code_timestamp(self, account_id: int) -> None:
         from datetime import datetime
-        account = self.get_by_id(account_id)
-        if account:
-            account.latest_code_updated_at = datetime.utcnow()
-            self.db.commit()
+        self.db.query(SteamAccount).filter(SteamAccount.id == account_id).update({
+            "latest_code_updated_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        })
+        self.db.commit()

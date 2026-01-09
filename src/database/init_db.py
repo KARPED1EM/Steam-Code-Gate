@@ -11,12 +11,19 @@ def init_database():
 
 def ensure_schema():
     with engine.begin() as connection:
-        result = connection.execute(text("PRAGMA table_info(steam_accounts)")).fetchall()
-        columns = {row[1] for row in result}
-        if "latest_email_code_at" not in columns:
-            connection.execute(
-                text("ALTER TABLE steam_accounts ADD COLUMN latest_email_code_at DATETIME")
-            )
+        # Check if table exists first
+        result = connection.execute(
+            text("SELECT name FROM sqlite_master WHERE type='table' AND name='steam_accounts'")
+        ).fetchone()
+
+        if result:
+            # Table exists, check for missing columns
+            columns_result = connection.execute(text("PRAGMA table_info(steam_accounts)")).fetchall()
+            columns = {row[1] for row in columns_result}
+            if "latest_email_code_at" not in columns:
+                connection.execute(
+                    text("ALTER TABLE steam_accounts ADD COLUMN latest_email_code_at DATETIME")
+                )
 
 
 def create_default_super_admin(db: Session, username: str, password_hash: str):

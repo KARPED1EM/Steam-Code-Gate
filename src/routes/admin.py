@@ -1,4 +1,6 @@
+import asyncio
 import json
+from concurrent.futures import ThreadPoolExecutor
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
@@ -21,6 +23,9 @@ from src.repositories.steam_account import SteamAccountRepository
 from src.services.auth import AuthContext, get_administrator, require_admin, require_super_admin
 from src.services.code_provider.email_provider import EmailProvider
 from src.services.password import hash_password
+
+# Thread pool for blocking I/O operations
+_thread_pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="imap_worker")
 
 router = APIRouter()
 templates = Jinja2Templates(directory=config.TEMPLATES_DIR)
@@ -105,9 +110,12 @@ async def get_email_service_status(
     accounts = repo.get_all() if auth.is_super_admin else repo.get_by_owner(auth.user_id)
     statuses = []
 
-    for account in accounts:
+    loop = asyncio.get_event_loop()
+
+    # Collect all health check tasks
+    async def check_account_health(account):
         if account.code_provider_type != CodeProviderType.EMAIL or not account.email_config:
-            continue
+            return None
 
         email_config = json.loads(account.email_config)
         provider = EmailProvider(
@@ -117,12 +125,18 @@ async def get_email_service_status(
             email_password=email_config["email_password"],
             use_ssl=email_config.get("use_ssl", True)
         )
-        is_ok, detail = provider.check_health()
-        statuses.append({
+        # Run blocking IMAP operation in thread pool
+        is_ok, detail = await loop.run_in_executor(_thread_pool, provider.check_health)
+        return {
             "account_id": account.id,
             "status": "ok" if is_ok else "error",
             "detail": detail
-        })
+        }
+
+    # Execute all health checks concurrently
+    tasks = [check_account_health(account) for account in accounts]
+    results = await asyncio.gather(*tasks)
+    statuses = [result for result in results if result is not None]
 
     return {"statuses": statuses}
 

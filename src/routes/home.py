@@ -1,4 +1,6 @@
+import asyncio
 import json
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from typing import List
 
@@ -16,6 +18,9 @@ from src.repositories.steam_account import SteamAccountRepository
 from src.services.auth import AuthContext, get_current_user
 from src.services.code_provider.email_provider import EmailProvider
 from src.services.code_provider.otp_provider import OTPProvider
+
+# Thread pool for blocking I/O operations
+_thread_pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="imap_worker")
 
 router = APIRouter()
 templates = Jinja2Templates(directory=config.TEMPLATES_DIR)
@@ -120,7 +125,13 @@ async def get_verification_code(
             email_password=email_config["email_password"],
             use_ssl=email_config.get("use_ssl", True)
         )
-        result = provider.fetch_latest_code_since(account.latest_email_code_at)
+        # Run blocking IMAP operation in thread pool to avoid blocking event loop
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(
+            _thread_pool,
+            provider.fetch_latest_code_since,
+            account.latest_email_code_at
+        )
 
         if result and result.code:
             repo.update_latest_code(account_id, result.code, code_time=result.code_timestamp)
