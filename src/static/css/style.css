@@ -38,6 +38,36 @@ html {
     overflow-x: hidden;
 }
 
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--tiktok-red) rgba(255, 255, 255, 0.05);
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--tiktok-red);
+    border-radius: 0;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--tiktok-red-hover);
+}
+
+*::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -507,24 +537,6 @@ html {
 
 .modal-content.large {
     max-width: 700px;
-}
-
-.modal-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.modal-content::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb {
-    background: var(--tiktok-red);
-    border-radius: 4px;
-}
-
-.modal-content::-webkit-scrollbar-thumb:hover {
-    background: var(--tiktok-red-hover);
 }
 
 .modal-content h2 {
